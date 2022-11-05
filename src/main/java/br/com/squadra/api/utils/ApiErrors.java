@@ -9,20 +9,14 @@ import java.util.List;
 public class ApiErrors {
 
     @Getter
-    private List<String> errors;
+    private String mensagem;
 
-    private HttpStatus status;
+    @Getter
+    private Integer status;
 
-    public ApiErrors(HttpStatus status, String mensagemErro) {
+    public ApiErrors(Integer status, String mensagem) {
         this.status = status;
-        this.errors = Arrays.asList(mensagemErro);
+        this.mensagem = mensagem;
     }
-
-    public ApiErrors(HttpStatus status, List<String> errors) {
-        this.status = status;
-        this.errors = errors;
-    }
-
-
 
 }

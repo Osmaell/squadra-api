@@ -18,6 +18,6 @@ public class UfDTO {
 
     private String nome;
 
-    private int status;
+    private Integer status;
 
 }

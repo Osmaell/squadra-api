@@ -4,19 +4,57 @@ import br.com.squadra.api.dto.UfDTO;
 import br.com.squadra.api.exception.RegraNegocioException;
 import br.com.squadra.api.model.Uf;
 import br.com.squadra.api.repository.UfRepository;
+import br.com.squadra.api.repository.specs.UfSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UfService {
 
     @Autowired
     private UfRepository ufRepository;
+
+    public ResponseEntity<?> buscar(UfDTO dto) {
+
+        Specification<Uf> specs = Specification.where( ((root, query, cb) -> cb.conjunction()) );
+
+        if (dto.getCodigoUF() != null) {
+            specs = specs.and(UfSpecs.codigoEqual(dto.getCodigoUF()));
+        }
+
+        if (StringUtils.hasText(dto.getNome())) {
+            specs = specs.and(UfSpecs.nomeEqual(dto.getNome()));
+        }
+
+        if (StringUtils.hasText(dto.getSigla())) {
+            specs = specs.and(UfSpecs.siglaEqual(dto.getSigla()));
+        }
+
+        if (dto.getStatus() != null) {
+            specs = specs.and(UfSpecs.statusEqual(dto.getStatus()));
+        }
+
+        List<Uf> ufs = ufRepository.findAll(specs);
+        List<UfDTO> ufDTOS = ufs.stream().map(this::converter).collect(Collectors.toList());
+
+        if (ufs.size() == 1) {
+            return ResponseEntity.ok(ufDTOS.get(0));
+        } else {
+            return ResponseEntity.ok(ufDTOS);
+        }
+
+    }
 
     public ResponseEntity<?> obterUf(Long codigo) {
 
