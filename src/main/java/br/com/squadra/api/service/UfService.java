@@ -6,13 +6,10 @@ import br.com.squadra.api.model.Uf;
 import br.com.squadra.api.repository.UfRepository;
 import br.com.squadra.api.repository.specs.UfSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +21,23 @@ public class UfService {
 
     @Autowired
     private UfRepository ufRepository;
+
+    public List<UfDTO> salvar(Uf uf) {
+
+        if ( !ufRepository.buscarPorSigla(uf.getSigla()).isEmpty() ) {
+            throw new RegraNegocioException("msg.uf_sigla_existente");
+        } else if ( !ufRepository.buscarPorNome(uf.getNome()).isEmpty() ) {
+            throw new RegraNegocioException("msg.uf_nome_existente");
+        }
+
+        ufRepository.save(uf);
+
+        return ufRepository
+                .findAll()
+                .stream()
+                .map(this::converter)
+                .collect(Collectors.toList());
+    }
 
     public ResponseEntity<?> buscar(UfDTO dto) {
 

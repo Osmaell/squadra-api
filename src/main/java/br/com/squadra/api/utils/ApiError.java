@@ -1,12 +1,8 @@
 package br.com.squadra.api.utils;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
-import java.util.Arrays;
-import java.util.List;
-
-public class ApiErrors {
+public class ApiError {
 
     @Getter
     private String mensagem;
@@ -14,7 +10,7 @@ public class ApiErrors {
     @Getter
     private Integer status;
 
-    public ApiErrors(Integer status, String mensagem) {
+    public ApiError(Integer status, String mensagem) {
         this.status = status;
         this.mensagem = mensagem;
     }

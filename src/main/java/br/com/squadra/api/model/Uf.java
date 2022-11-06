@@ -25,17 +25,17 @@ public class Uf {
     @Column(name = "codigo")
     private Long codigo;
 
-    @NotNull
-    @NotEmpty
+    @NotEmpty(message = "{msg.uf_sigla_vazia}")
+    @NotNull(message = "{msg.uf_sigla_ausente}")
     @Column(name = "sigla", length = 3)
     private String sigla;
 
-    @NotNull
-    @NotEmpty
+    @NotEmpty(message = "{msg.uf_nome_vazio}")
+    @NotNull(message = "{msg.uf_nome_ausente}")
     @Column(name = "nome", length = 60)
     private String nome;
 
-    @NotNull
+    @NotNull(message = "{msg.uf_status_ausente}")
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "status")
     private Status status;
