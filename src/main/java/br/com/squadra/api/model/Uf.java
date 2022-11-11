@@ -1,8 +1,7 @@
 package br.com.squadra.api.model;
 
-import br.com.squadra.api.model.enums.Status;
+import br.com.squadra.api.validation.StatusInvalido;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -35,9 +34,9 @@ public class Uf {
     @Column(name = "nome", length = 60)
     private String nome;
 
+    @StatusInvalido
     @NotNull(message = "{msg.uf_status_ausente}")
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "status")
-    private Status status;
+    @Column(name = "status", length = 3)
+    private Integer status;
 
 }

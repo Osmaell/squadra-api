@@ -34,4 +34,10 @@ public class UfController {
         return ufService.obterUf(codigo);
     }
 
+    @DeleteMapping("/{codigoUF}")
+    public ResponseEntity<?> deletarPeloCodigo(@PathVariable Long codigoUF) {
+        List<UfDTO> ufs = ufService.deletar(codigoUF);
+        return ResponseEntity.ok(ufs);
+    }
+
 }

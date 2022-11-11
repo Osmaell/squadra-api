@@ -81,12 +81,29 @@ public class UfService {
         return ResponseEntity.ok(new ArrayList<>());
     }
 
+    public List<UfDTO> deletar(Long codigo) {
+
+        try {
+
+            ufRepository.deleteById(codigo);
+
+            return ufRepository.findAll()
+                    .stream()
+                    .map(this::converter)
+                    .collect(Collectors.toList());
+
+        } catch (Exception ex) {
+            throw new RegraNegocioException("msg.uf_erro_ao_deletar");
+        }
+
+    }
+
     private UfDTO converter(Uf uf) {
         return UfDTO.builder()
                 .codigoUF(uf.getCodigo())
                 .sigla(uf.getSigla())
                 .nome(uf.getNome())
-                .status(uf.getStatus().getValor())
+                .status(uf.getStatus())
                 .build();
     }
 

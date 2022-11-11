@@ -1,6 +1,5 @@
 package br.com.squadra.api.model;
 
-import br.com.squadra.api.model.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,8 +30,7 @@ public class Municipio {
 
     @NotNull
     @Column(name = "status")
-    @Enumerated(EnumType.ORDINAL)
-    private Status status;
+    private Integer status;
 
     @NotNull
     @ManyToOne

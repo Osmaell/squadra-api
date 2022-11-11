@@ -1,6 +1,5 @@
 package br.com.squadra.api.model;
 
-import br.com.squadra.api.model.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -50,9 +49,8 @@ public class Pessoa {
     private String senha;
 
     @NotNull
-    @Enumerated(EnumType.ORDINAL)
     @Column(name = "status")
-    private Status status;
+    private Integer status;
 
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Endereco> enderecos;
