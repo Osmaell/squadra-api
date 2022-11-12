@@ -1,6 +1,7 @@
 package br.com.squadra.api.service;
 
 import br.com.squadra.api.dto.MunicipioDTO;
+import br.com.squadra.api.exception.RegraNegocioException;
 import br.com.squadra.api.model.Municipio;
 import br.com.squadra.api.repository.MunicipioRepository;
 import br.com.squadra.api.repository.specs.MunicipioSpecs;
@@ -12,6 +13,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +53,18 @@ public class MunicipioService {
         }
 
         return ResponseEntity.ok(municipioDTOs);
+    }
+
+    public ResponseEntity<?> buscarPorCodigo(Long codigo) {
+
+        Optional<Municipio> optionalMunicipio = municipioRepository.findById(codigo);
+
+        if (optionalMunicipio.isEmpty()) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+
+        MunicipioDTO dto = converter(optionalMunicipio.get());
+        return ResponseEntity.ok(dto);
     }
 
     private MunicipioDTO converter(Municipio municipio) {
