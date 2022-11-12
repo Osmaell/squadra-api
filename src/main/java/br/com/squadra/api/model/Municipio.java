@@ -21,7 +21,7 @@ public class Municipio {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = MUNICIPIO_SEQUENCE)
     @Column(name = "codigo")
-    private Long codigoMunicipio;
+    private Long codigo;
 
     @NotEmpty
     @NotNull

@@ -75,7 +75,7 @@ public class UfService {
         }
 
         List<Uf> ufs = ufRepository.findAll(specs);
-        List<UfDTO> ufDTOS = buscarTodas();
+        List<UfDTO> ufDTOS = ufs.stream().map(this::converter).collect(Collectors.toList());
 
         if (ufs.size() == 1) {
             return ResponseEntity.ok(ufDTOS.get(0));

@@ -3,8 +3,6 @@ package br.com.squadra.api.controller;
 import br.com.squadra.api.exception.RegraNegocioException;
 import br.com.squadra.api.utils.ApiError;
 import br.com.squadra.api.utils.ApiFieldError;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -40,11 +38,11 @@ public class ApplicationControllerAdvice extends ResponseEntityExceptionHandler 
     @Override
     protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-        String entidade = ex.getTarget().getClass().toString()
+        String entidade = ex.getObjectName()
                 .replace("class br.com.squadra.api.dto.", "")
                 .replace("DTO", "");
 
-        String mensagem = String.format("Não foi possível consultar %s no banco de dados.", entidade);
+        String mensagem = String.format("Não foi possível consultar %s no banco de dados.", entidade.toLowerCase());
         ApiError mensagemErro = new ApiError(HttpStatus.BAD_REQUEST.value(), mensagem);
 
         return handleExceptionInternal(ex, mensagemErro, headers, HttpStatus.BAD_REQUEST, request);
