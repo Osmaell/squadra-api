@@ -5,6 +5,7 @@ import br.com.squadra.api.exception.RegraNegocioException;
 import br.com.squadra.api.model.Uf;
 import br.com.squadra.api.repository.UfRepository;
 import br.com.squadra.api.repository.specs.UfSpecs;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,20 @@ public class UfService {
                 .collect(Collectors.toList());
     }
 
+    public List<UfDTO> atualizar(UfDTO ufDTO) {
+
+        Optional<Uf> ufSalva = ufRepository.findById(ufDTO.getCodigoUF());
+
+        if (ufSalva.isEmpty()) {
+            throw new RegraNegocioException("msg.uf_nao_existente");
+        }
+
+        BeanUtils.copyProperties(ufDTO, ufSalva.get(), "codigoUF");
+        ufRepository.save(ufSalva.get());
+
+        return buscarTodas();
+    }
+
     public ResponseEntity<?> buscar(UfDTO dto) {
 
         Specification<Uf> specs = Specification.where( ((root, query, cb) -> cb.conjunction()) );
@@ -60,7 +75,7 @@ public class UfService {
         }
 
         List<Uf> ufs = ufRepository.findAll(specs);
-        List<UfDTO> ufDTOS = ufs.stream().map(this::converter).collect(Collectors.toList());
+        List<UfDTO> ufDTOS = buscarTodas();
 
         if (ufs.size() == 1) {
             return ResponseEntity.ok(ufDTOS.get(0));
@@ -86,16 +101,19 @@ public class UfService {
         try {
 
             ufRepository.deleteById(codigo);
-
-            return ufRepository.findAll()
-                    .stream()
-                    .map(this::converter)
-                    .collect(Collectors.toList());
+            return buscarTodas();
 
         } catch (Exception ex) {
             throw new RegraNegocioException("msg.uf_erro_ao_deletar");
         }
 
+    }
+
+    private List<UfDTO> buscarTodas() {
+        return ufRepository.findAll()
+                .stream()
+                .map(this::converter)
+                .collect(Collectors.toList());
     }
 
     private UfDTO converter(Uf uf) {

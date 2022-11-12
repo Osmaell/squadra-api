@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = StatusInvalidoValidator.class)
 public @interface StatusInvalido {
 
-    String message() default "Não foi possível incluir a Uf no banco de dados.<br>Motivo: O status só pode ser 1 ou 2.";
+    String message() default "{msg.uf_status_invalido}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 

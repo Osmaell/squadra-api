@@ -9,7 +9,7 @@ public class StatusInvalidoValidator implements ConstraintValidator<StatusInvali
 
     @Override
     public boolean isValid(Integer status, ConstraintValidatorContext context) {
-        return status == 1 || status == 2;
+        return status != null && (status == 1 || status == 2);
     }
 
 }
