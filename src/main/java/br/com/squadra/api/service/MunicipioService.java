@@ -3,6 +3,7 @@ package br.com.squadra.api.service;
 import br.com.squadra.api.dto.MunicipioDTO;
 import br.com.squadra.api.exception.RegraNegocioException;
 import br.com.squadra.api.model.Municipio;
+import br.com.squadra.api.model.Uf;
 import br.com.squadra.api.repository.MunicipioRepository;
 import br.com.squadra.api.repository.specs.MunicipioSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,27 @@ public class MunicipioService {
 
     @Autowired
     private MunicipioRepository municipioRepository;
+
+    @Autowired
+    private UfService ufService;
+
+    public List<MunicipioDTO> salvar(MunicipioDTO dto) {
+
+        Optional<Municipio> optionalMunicipio = municipioRepository
+                .buscarPorNomeEUf(dto.getNome(), dto.getCodigoUF());
+
+        if (optionalMunicipio.isPresent()) {
+            throw new RegraNegocioException("msg.municipio-existente");
+        }
+
+        municipioRepository.saveAndFlush(converter(dto));
+
+        return municipioRepository
+                .findAll()
+                .stream()
+                .map(this::converter)
+                .collect(Collectors.toList());
+    }
 
     public ResponseEntity<?> buscar(MunicipioDTO dto) {
 
@@ -73,6 +95,17 @@ public class MunicipioService {
                 .codigoUF(municipio.getUf().getCodigo())
                 .status(municipio.getStatus())
                 .nome(municipio.getNome())
+                .build();
+    }
+
+    private Municipio converter(MunicipioDTO dto) {
+
+        Uf uf = ufService.buscarPorCodigo(dto.getCodigoUF());
+
+        return Municipio.builder()
+                .nome(dto.getNome())
+                .status(dto.getStatus())
+                .uf(uf)
                 .build();
     }
 

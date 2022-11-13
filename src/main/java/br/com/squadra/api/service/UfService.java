@@ -85,6 +85,11 @@ public class UfService {
 
     }
 
+    public Uf buscarPorCodigo(Long codigo) {
+        return ufRepository.findById(codigo)
+                .orElseThrow(() -> new RegraNegocioException("msg.municipio-uf-ausente"));
+    }
+
     public ResponseEntity<?> obterUf(Long codigo) {
 
         Optional<Uf> optional = ufRepository.findById(codigo);

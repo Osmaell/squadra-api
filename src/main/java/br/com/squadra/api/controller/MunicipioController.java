@@ -1,10 +1,14 @@
 package br.com.squadra.api.controller;
 
 import br.com.squadra.api.dto.MunicipioDTO;
+import br.com.squadra.api.model.Municipio;
 import br.com.squadra.api.service.MunicipioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/municipio")
@@ -12,6 +16,12 @@ public class MunicipioController {
 
     @Autowired
     private MunicipioService municipioService;
+
+    @PostMapping
+    public ResponseEntity<?> salvar( @RequestBody @Valid MunicipioDTO dto ) {
+        List<MunicipioDTO> municipios = municipioService.salvar(dto);
+        return ResponseEntity.ok(municipios);
+    }
 
     @GetMapping
     public ResponseEntity<?> buscar( MunicipioDTO dto) {
