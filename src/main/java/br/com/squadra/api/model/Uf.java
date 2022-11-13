@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,19 +25,19 @@ public class Uf {
     @Column(name = "codigo")
     private Long codigo;
 
-    @NotEmpty(message = "{msg.uf_sigla_vazia}")
+    @Size(min = 1, max = 3, message = "{campo.sigla.tamanho.excedido}")
     @NotNull(message = "{msg.uf_sigla_ausente}")
     @Column(name = "sigla", length = 3)
     private String sigla;
 
-    @NotEmpty(message = "{msg.uf_nome_vazio}")
+    @Size(min = 3, message = "{campo.nome.tamanho-invalido}")
     @NotNull(message = "{msg.uf_nome_ausente}")
     @Column(name = "nome", length = 60)
     private String nome;
 
     @StatusInvalido
     @NotNull(message = "{msg.uf_status_ausente}")
-    @Column(name = "status", length = 3)
+    @Column(name = "status")
     private Integer status;
 
 }
