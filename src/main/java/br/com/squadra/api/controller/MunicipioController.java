@@ -40,4 +40,10 @@ public class MunicipioController {
         return ResponseEntity.ok(municipios);
     }
 
+    @DeleteMapping("/{codigoMunicipio}")
+    public ResponseEntity<?> deletar( @PathVariable Long codigoMunicipio) {
+        List<MunicipioDTO> municipios = municipioService.deletar(codigoMunicipio);
+        return ResponseEntity.ok(municipios);
+    }
+
 }

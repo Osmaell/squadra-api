@@ -81,18 +81,11 @@ public class ApplicationControllerAdvice extends ResponseEntityExceptionHandler 
                     .replace("codigoMunicipio", "")
                     .replaceAll("[^a-zA-Z]", "");
 
-            System.out.println(classe);
-
-//            MunicipioUpdate[\"codigoMunicipio\"]
-
             if (mie.getPath() != null && mie.getPath().size() > 0) {
                 campo = mie.getPath().get(0).getFieldName();
             }
 
         }
-
-//        String mensagem = messageSource
-//                .getMessage("Não foi possível salvar o(a) Uf no banco de dados.<br>Motivo: o campo", null, LocaleContextHolder.getLocale());
 
         String mensagem = String.format("Não foi possível salvar o(a) %s no banco de dados.<br>Motivo: o campo", classe);
         String mensagemErro = String.format("%s %s esta recebendo um tipo de dado inválido.", mensagem, campo);

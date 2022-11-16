@@ -102,6 +102,17 @@ public class MunicipioService {
         return buscarTodos();
     }
 
+    public List<MunicipioDTO> deletar(Long codigoMunicipio) {
+
+        try {
+            municipioRepository.deleteById(codigoMunicipio);
+            return buscarTodos();
+        } catch (Exception ex) {
+            throw new RegraNegocioException("msg.municipio_erro_ao_deletar");
+        }
+
+    }
+
     private List<MunicipioDTO> buscarTodos() {
         return municipioRepository.findAll()
                 .stream()
