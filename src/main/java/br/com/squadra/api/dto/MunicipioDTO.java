@@ -28,4 +28,8 @@ public class MunicipioDTO {
     @StatusInvalido(message = "{msg.municipio_status_invalido}")
     private Integer status;
 
+    public boolean codigoMunicipioAusente() {
+        return getCodigoMunicipio() == null;
+    }
+
 }

@@ -18,7 +18,7 @@ public class UfDTO {
 
     @NotNull(message = "{campo.codigo-uf.obrigatorio}")
     private Long codigoUF;
-    
+
     @Size(min = 1, max = 3, message = "{campo.sigla.tamanho.excedido}")
     @NotNull(message = "{campo.sigla.obrigatorio}")
     private String sigla;

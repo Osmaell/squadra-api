@@ -1,11 +1,13 @@
 package br.com.squadra.api.service;
 
 import br.com.squadra.api.dto.MunicipioDTO;
+import br.com.squadra.api.dto.MunicipioUpdateDTO;
 import br.com.squadra.api.exception.RegraNegocioException;
 import br.com.squadra.api.model.Municipio;
 import br.com.squadra.api.model.Uf;
 import br.com.squadra.api.repository.MunicipioRepository;
 import br.com.squadra.api.repository.specs.MunicipioSpecs;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
@@ -87,6 +89,24 @@ public class MunicipioService {
 
         MunicipioDTO dto = converter(optionalMunicipio.get());
         return ResponseEntity.ok(dto);
+    }
+
+    public List<MunicipioDTO> atualizar(MunicipioUpdateDTO municipioDTO) {
+
+        Municipio municipioSalvo = municipioRepository.findById(municipioDTO.getCodigoMunicipio())
+                .orElseThrow(() -> new RegraNegocioException("msg.municipio-inexistente"));
+
+        BeanUtils.copyProperties(municipioDTO, municipioSalvo, "codigoMunicipio");
+        municipioRepository.saveAndFlush(municipioSalvo);
+
+        return buscarTodos();
+    }
+
+    private List<MunicipioDTO> buscarTodos() {
+        return municipioRepository.findAll()
+                .stream()
+                .map(this::converter)
+                .collect(Collectors.toList());
     }
 
     private MunicipioDTO converter(Municipio municipio) {

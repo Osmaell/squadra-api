@@ -1,6 +1,7 @@
 package br.com.squadra.api.controller;
 
 import br.com.squadra.api.dto.MunicipioDTO;
+import br.com.squadra.api.dto.MunicipioUpdateDTO;
 import br.com.squadra.api.model.Municipio;
 import br.com.squadra.api.service.MunicipioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,12 @@ public class MunicipioController {
     @GetMapping("/{codigo}")
     public ResponseEntity<?> buscarPorCodigo( @PathVariable Long codigo ) {
         return municipioService.buscarPorCodigo(codigo);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> atualizar( @RequestBody @Valid MunicipioUpdateDTO municipioDTO ) {
+        List<MunicipioDTO> municipios = municipioService.atualizar(municipioDTO);
+        return ResponseEntity.ok(municipios);
     }
 
 }
