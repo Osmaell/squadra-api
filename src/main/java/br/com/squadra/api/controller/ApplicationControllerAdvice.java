@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 @RestControllerAdvice
 public class ApplicationControllerAdvice extends ResponseEntityExceptionHandler {
@@ -43,8 +45,17 @@ public class ApplicationControllerAdvice extends ResponseEntityExceptionHandler 
                 .replace("class br.com.squadra.api.dto.", "")
                 .replace("DTO", "");
 
-        String mensagem = String.format("Não foi possível consultar %s no banco de dados.", entidade.toLowerCase());
-        ApiError mensagemErro = new ApiError(HttpStatus.BAD_REQUEST.value(), mensagem);
+        String mensagem = String.format("Não foi possível consultar %s no banco de dados. ", entidade.toLowerCase());
+        ApiError mensagemErro = new ApiError();
+
+        ex.getBindingResult().getFieldErrors().forEach(fieldError -> {
+
+            String mensagemII = String.format("O valor do campo %s precisa ser um número, e você passou '%s'", fieldError.getField(), fieldError.getRejectedValue());
+
+            mensagemErro.setMensagem(mensagem.concat(mensagemII));
+            mensagemErro.setStatus(HttpStatus.BAD_REQUEST.value());
+
+        });
 
         return handleExceptionInternal(ex, mensagemErro, headers, HttpStatus.BAD_REQUEST, request);
     }
