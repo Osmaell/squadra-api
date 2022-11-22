@@ -4,6 +4,7 @@ import br.com.squadra.api.exception.RegraNegocioException;
 import br.com.squadra.api.utils.ApiError;
 import br.com.squadra.api.utils.ApiFieldError;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -18,11 +19,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 @RestControllerAdvice
@@ -35,6 +35,20 @@ public class ApplicationControllerAdvice extends ResponseEntityExceptionHandler 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleRegraNegocioException(RegraNegocioException ex) {
         String mensagemErro = messageSource.getMessage(ex.getMessage(), null, LocaleContextHolder.getLocale());
+        return new ApiError(HttpStatus.BAD_REQUEST.value(), mensagemErro);
+    }
+
+    @ExceptionHandler({ MethodArgumentTypeMismatchException.class })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleMethodArgumentTypeMismatch( MethodArgumentTypeMismatchException ex, WebRequest request){
+
+        // String classe = request.toString().split("/")[1];
+
+        String mensagemErro = ex.getName() + " passado na url, deve ser um " + ex.getRequiredType().getName()
+                .replaceAll("[^a-zA-Z]|java|lang", "")
+                .replace("Long", "número.")
+                .replace("String", "texto.");
+
         return new ApiError(HttpStatus.BAD_REQUEST.value(), mensagemErro);
     }
 

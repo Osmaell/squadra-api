@@ -1,6 +1,7 @@
 package br.com.squadra.api.service;
 
 import br.com.squadra.api.dto.BairroDTO;
+import br.com.squadra.api.exception.RegraNegocioException;
 import br.com.squadra.api.model.Bairro;
 import br.com.squadra.api.model.Municipio;
 import br.com.squadra.api.repository.BairroRepository;
@@ -53,6 +54,14 @@ public class BairroService {
         return ResponseEntity.ok(dtos);
     }
 
+    public BairroDTO buscarPorCodigo(Long codigo) {
+
+        Bairro bairro = bairroRepository.findById(codigo)
+                .orElseThrow(() -> new RegraNegocioException("msg.bairro-inexistente"));
+
+        return converter(bairro);
+    }
+
     private BairroDTO converter(Bairro bairro) {
         return BairroDTO.builder()
                 .codigoBairro(bairro.getCodigo())
@@ -61,5 +70,7 @@ public class BairroService {
                 .status(bairro.getStatus())
                 .build();
     }
+
+
 
 }

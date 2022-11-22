@@ -14,10 +14,4 @@ public class RegraNegocioException extends RuntimeException {
         super(message);
     }
 
-    public RegraNegocioException(String message, String method, String campo) {
-        super(message);
-        this.method = method;
-        this.campo = campo;
-    }
-
 }

@@ -5,6 +5,7 @@ import br.com.squadra.api.service.BairroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,12 @@ public class BairroController {
     @GetMapping
     public ResponseEntity<?> buscar(BairroDTO bairroDTO) {
         return bairroService.buscar(bairroDTO);
+    }
+
+    @GetMapping("/{codigo}")
+    public ResponseEntity<?> buscarPorCodigo(@PathVariable Long codigo) {
+        BairroDTO bairroDTO = bairroService.buscarPorCodigo(codigo);
+        return ResponseEntity.ok(bairroDTO);
     }
 
 }
