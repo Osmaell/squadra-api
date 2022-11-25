@@ -91,6 +91,12 @@ public class MunicipioService {
         return ResponseEntity.ok(dto);
     }
 
+    public Municipio buscarPorCodigoSemResponseEntity(Long codigo) {
+        return municipioRepository
+                .findById(codigo)
+                .orElseThrow(() -> new RegraNegocioException("msg.municipio-inexistente"));
+    }
+
     public List<MunicipioDTO> atualizar(MunicipioUpdateDTO municipioDTO) {
 
         Municipio municipioSalvo = municipioRepository.findById(municipioDTO.getCodigoMunicipio())

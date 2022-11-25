@@ -12,8 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +21,9 @@ public class BairroService {
 
     @Autowired
     private BairroRepository bairroRepository;
+
+    @Autowired
+    private MunicipioService municipioService;
 
     public ResponseEntity<?> buscar(BairroDTO bairroDTO) {
 
@@ -62,6 +65,23 @@ public class BairroService {
         return converter(bairro);
     }
 
+    public List<BairroDTO> salvar(BairroDTO bairroDTO) {
+
+        Optional<Bairro> optionalBairro = bairroRepository
+                .buscarPorNomeEMunicipio(bairroDTO.getNome(), bairroDTO.getCodigoMunicipio());
+
+        if (optionalBairro.isPresent()) {
+            throw new RegraNegocioException("msg.bairro-existente");
+        }
+
+        bairroRepository.saveAndFlush( converter(bairroDTO) );
+
+        return bairroRepository.findAll()
+                .stream()
+                .map(this::converter)
+                .collect(Collectors.toList());
+    }
+
     private BairroDTO converter(Bairro bairro) {
         return BairroDTO.builder()
                 .codigoBairro(bairro.getCodigo())
@@ -71,6 +91,16 @@ public class BairroService {
                 .build();
     }
 
+    private Bairro converter(BairroDTO dto) {
 
+        Municipio municipio = municipioService
+                .buscarPorCodigoSemResponseEntity(dto.getCodigoMunicipio());
+
+        return Bairro.builder()
+                .municipio(municipio)
+                .status(dto.getStatus())
+                .nome(dto.getNome())
+                .build();
+    }
 
 }
