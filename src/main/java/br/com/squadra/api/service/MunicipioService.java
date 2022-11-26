@@ -98,9 +98,12 @@ public class MunicipioService {
     }
 
     public List<MunicipioDTO> atualizar(MunicipioUpdateDTO municipioDTO) {
+        
+        // verificando se UF informada é válida
+        ufService.buscarPorCodigo(municipioDTO.getCodigoUF());
 
-        Municipio municipioSalvo = municipioRepository.findById(municipioDTO.getCodigoMunicipio())
-                .orElseThrow(() -> new RegraNegocioException("msg.municipio-inexistente"));
+        // buscando o município pelo código
+        Municipio municipioSalvo = buscarPorCodigoSemResponseEntity(municipioDTO.getCodigoMunicipio());
 
         BeanUtils.copyProperties(municipioDTO, municipioSalvo, "codigoMunicipio");
         municipioRepository.saveAndFlush(municipioSalvo);
