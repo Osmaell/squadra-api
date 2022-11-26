@@ -1,6 +1,7 @@
 package br.com.squadra.api.controller;
 
 import br.com.squadra.api.dto.BairroDTO;
+import br.com.squadra.api.dto.BairroUpdateDTO;
 import br.com.squadra.api.service.BairroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,12 @@ public class BairroController {
     @PostMapping
     public ResponseEntity<?> salvar(@RequestBody @Valid BairroDTO bairroDTO) {
         List<BairroDTO> bairros = bairroService.salvar(bairroDTO);
+        return ResponseEntity.ok(bairros);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> atualizar( @RequestBody @Valid BairroUpdateDTO bairroDTO ) {
+        List<BairroDTO> bairros = bairroService.atualizar(bairroDTO);
         return ResponseEntity.ok(bairros);
     }
 

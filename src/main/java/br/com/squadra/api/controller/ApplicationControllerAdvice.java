@@ -93,6 +93,7 @@ public class ApplicationControllerAdvice extends ResponseEntityExceptionHandler 
 
         String campo = null;
         String classe = null;
+        String metodo = null;
         Throwable cause = ex.getCause();
 
         if (cause instanceof MismatchedInputException) {
@@ -101,10 +102,15 @@ public class ApplicationControllerAdvice extends ResponseEntityExceptionHandler 
 
             classe = mie.getPathReference()
                     .replace("br.com.squadra.api.dto.", "")
-                    .replace("DTO", "")
-                    .replace("Update", "")
-                    .replace("codigoMunicipio", "")
                     .replaceAll("[^a-zA-Z]", "");
+
+            if (classe.contains("UpdateDTO")) {
+                metodo = "atualizar";
+                classe = classe.substring(0, classe.indexOf("Update"));
+            } else {
+                metodo = "salvar";
+                classe = classe.substring(0, classe.indexOf("DTO"));
+            }
 
             if (mie.getPath() != null && mie.getPath().size() > 0) {
                 campo = mie.getPath().get(0).getFieldName();
@@ -112,10 +118,11 @@ public class ApplicationControllerAdvice extends ResponseEntityExceptionHandler 
 
         }
 
-        String mensagem = String.format("Não foi possível salvar o(a) %s no banco de dados.<br>Motivo: o campo", classe);
-        String mensagemErro = String.format("%s %s esta recebendo um tipo de dado inválido.", mensagem, campo);
+        String mensagem = String.format("Não foi possível %s o(a) %s no banco de dados.<br>Motivo: " +
+                "o campo %s esta recebendo um tipo de dado inválido.", metodo, classe, campo);
+        // String mensagemErro = String.format("%s %s esta recebendo um tipo de dado inválido.", mensagem, campo);
 
-        ApiFieldError error = new ApiFieldError(HttpStatus.BAD_REQUEST.value(), mensagemErro, campo);
+        ApiFieldError error = new ApiFieldError(HttpStatus.BAD_REQUEST.value(), mensagem, campo);
 
         return handleExceptionInternal(ex, error, headers, HttpStatus.BAD_REQUEST, request);
     }

@@ -1,11 +1,13 @@
 package br.com.squadra.api.service;
 
 import br.com.squadra.api.dto.BairroDTO;
+import br.com.squadra.api.dto.BairroUpdateDTO;
 import br.com.squadra.api.exception.RegraNegocioException;
 import br.com.squadra.api.model.Bairro;
 import br.com.squadra.api.model.Municipio;
 import br.com.squadra.api.repository.BairroRepository;
 import br.com.squadra.api.repository.specs.BairroSpecs;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
@@ -58,11 +60,16 @@ public class BairroService {
     }
 
     public BairroDTO buscarPorCodigo(Long codigo) {
-
-        Bairro bairro = bairroRepository.findById(codigo)
-                .orElseThrow(() -> new RegraNegocioException("msg.bairro-inexistente"));
-
+        Bairro bairro = buscarPorCodigoSemConverter(codigo);
         return converter(bairro);
+    }
+
+    public List<BairroDTO> buscarTodos() {
+        return bairroRepository
+                .findAll()
+                .stream()
+                .map(this::converter)
+                .collect(Collectors.toList());
     }
 
     public List<BairroDTO> salvar(BairroDTO bairroDTO) {
@@ -76,10 +83,28 @@ public class BairroService {
 
         bairroRepository.saveAndFlush( converter(bairroDTO) );
 
-        return bairroRepository.findAll()
-                .stream()
-                .map(this::converter)
-                .collect(Collectors.toList());
+        return buscarTodos();
+    }
+
+    public List<BairroDTO> atualizar(BairroUpdateDTO bairroDTO) {
+
+        // verificando se município informado existe
+        municipioService.buscarPorCodigoSemResponseEntity(bairroDTO.getCodigoMunicipio());
+
+        // buscando o bairro pelo código
+        Bairro bairroSalvo = buscarPorCodigoSemConverter(bairroDTO.getCodigoBairro());
+
+        BeanUtils.copyProperties(bairroDTO, bairroSalvo, "codigoBairro");
+
+        bairroRepository.saveAndFlush(bairroSalvo);
+
+        return buscarTodos();
+    }
+
+    private Bairro buscarPorCodigoSemConverter(Long codigo) {
+        return bairroRepository
+                .findById(codigo)
+                .orElseThrow(() -> new RegraNegocioException("msg.bairro-inexistente"));
     }
 
     private BairroDTO converter(Bairro bairro) {
